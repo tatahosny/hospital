@@ -7,10 +7,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-    <!-- إضافة مكتبة الخطوط العربية -->
     <script src="https://cdn.jsdelivr.net/npm/jspdf-arabic@1.0.0/dist/jspdf.arabic.min.js"></script>
     <style>
-        /* [كل الـ CSS السابق يبقى كما هو] */
         /* متغيرات الألوان */
         :root {
             --primary-color: #1a73e8;
@@ -150,9 +148,749 @@
             }
         }
 
-        /* [بقية الـ CSS يبقى كما هو] */
-        /* ... */
+        /* شريط التنقل */
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.97);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 0.8rem 1.5rem;
+            backdrop-filter: blur(10px);
+        }
 
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .hospital-logo {
+            height: 55px;
+        }
+
+        .ministry-logo {
+            height: 45px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-links li a {
+            text-decoration: none;
+            color: var(--dark-color);
+            font-weight: 600;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-links li a:before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 0;
+            height: 3px;
+            background-color: var(--primary-color);
+            transition: var(--transition);
+        }
+
+        .nav-links li a:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-links li a:hover:before {
+            width: 100%;
+        }
+
+        .nav-links li a.active {
+            color: var(--primary-color);
+        }
+
+        .nav-links li a.active:before {
+            width: 100%;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.5rem 1rem;
+            background-color: rgba(26, 115, 232, 0.1);
+            border-radius: 8px;
+            margin-right: 1rem;
+        }
+
+        .user-info i {
+            color: var(--primary-color);
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .user-role {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        /* المحتوى الرئيسي */
+        .container {
+            max-width: 1400px;
+            margin: 2.5rem auto;
+            padding: 0 1.5rem;
+            background-color: rgba(255, 255, 255, 0.92);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
+
+        /* الصفحة الرئيسية */
+        .hero {
+            text-align: center;
+            padding: 5rem 2rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 16px 16px 0 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,128C960,128,1056,192,1152,192C1248,192,1344,128,1392,96L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-size: cover;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 800px;
+            margin: 0 auto 2.5rem;
+            opacity: 0.95;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: var(--accent-color);
+            color: var(--dark-color);
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            box-shadow: var(--shadow-light);
+        }
+
+        .btn:hover {
+            background-color: var(--accent-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn i {
+            font-size: 1.1rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--secondary-dark);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2.5rem;
+            padding: 4rem 2rem;
+        }
+
+        .feature-card {
+            background-color: white;
+            padding: 2.5rem 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-light);
+            text-align: center;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to left, var(--primary-color), var(--secondary-color));
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-icon {
+            font-size: 3.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--dark-color);
+        }
+
+        .feature-card p {
+            color: var(--text-light);
+            line-height: 1.7;
+        }
+
+        /* نموذج الحجز */
+        .booking-form {
+            padding: 3rem 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .form-header h2 {
+            font-size: 2.2rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-header p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.8rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.7rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.2);
+            outline: none;
+        }
+
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .time-slot {
+            background-color: #f0f0f0;
+            padding: 1rem;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+
+        .time-slot:hover {
+            background-color: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        .time-slot.selected {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-dark);
+        }
+
+        .time-slot.disabled {
+            background-color: #f5f5f5;
+            color: #aaa;
+            cursor: not-allowed;
+        }
+
+        /* صفحة تسجيل الدخول */
+        .login-container {
+            max-width: 450px;
+            margin: 5rem auto;
+            padding: 3rem;
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+            font-size: 2rem;
+        }
+
+        .login-icon {
+            font-size: 4rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        /* لوحة التحكم */
+        .dashboard {
+            padding: 2.5rem;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .dashboard-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .dashboard-title i {
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+
+        .dashboard-title h2 {
+            font-size: 2rem;
+            color: var(--dark-color);
+        }
+
+        .user-welcome {
+            background-color: rgba(26, 115, 232, 0.1);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+
+        .user-welcome h3 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-light);
+            text-align: center;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to left, var(--primary-color), var(--secondary-color));
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        .admin-only {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: #856404;
+        }
+
+        .appointments-section {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-light);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            padding: 1.5rem 2rem;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-header h3 {
+            font-size: 1.5rem;
+        }
+
+        .appointments-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .appointments-table th, 
+        .appointments-table td {
+            padding: 1.2rem 1.5rem;
+            text-align: right;
+            border-bottom: 1px solid #eee;
+        }
+
+        .appointments-table th {
+            background-color: #f8f9fa;
+            color: var(--dark-color);
+            font-weight: 600;
+        }
+
+        .appointments-table tr:hover {
+            background-color: #f5f9ff;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.9rem;
+        }
+
+        .print-btn {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .print-btn:hover {
+            background-color: var(--secondary-dark);
+        }
+
+        .delete-btn {
+            background-color: #ea4335;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background-color: #d33426;
+        }
+
+        /* إدارة الأطباء */
+        .doctors-management {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-light);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .add-doctor-form {
+            padding: 1.5rem 2rem;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #eee;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .doctors-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .doctors-table th, 
+        .doctors-table td {
+            padding: 1.2rem 1.5rem;
+            text-align: right;
+            border-bottom: 1px solid #eee;
+        }
+
+        .doctors-table th {
+            background-color: #f8f9fa;
+            color: var(--dark-color);
+            font-weight: 600;
+        }
+
+        .specialty-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background-color: #e3f2fd;
+            color: #1565c0;
+        }
+
+        /* التذييل */
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            text-align: center;
+            padding: 3rem 1rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            height: 60px;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-content p {
+            margin-bottom: 0.5rem;
+            opacity: 0.9;
+        }
+
+        .university {
+            font-weight: bold;
+            color: var(--accent-color);
+            font-size: 1.1rem;
+        }
+
+        /* إخفاء الصفحات */
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .active {
+            display: block;
+        }
+
+        /* التبويبات */
+        .tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #f5f5f5;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .tab.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* التجاوب مع الشاشات المختلفة */
+        @media (max-width: 992px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .user-info {
+                margin-right: 0;
+                margin-top: 1rem;
+            }
+
+            .hero {
+                padding: 3rem 1.5rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .time-slots {
+                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-header {
+                flex-direction: column;
+                gap: 1.5rem;
+                align-items: flex-start;
+            }
+            
+            .appointments-table, .doctors-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .form-row {
+                flex-direction: column;
+            }
+
+            .modal-content {
+                padding: 2rem 1.5rem;
+            }
+
+            .modal-buttons {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 2rem 1.5rem;
+            }
+            
+            .booking-form {
+                padding: 2rem 1rem;
+            }
+            
+            .dashboard {
+                padding: 1.5rem 1rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -993,85 +1731,63 @@
             return new Date(dateString).toLocaleDateString('ar-EG', options);
         }
 
-        // طباعة حجوزات تخصص معين - النسخة المحسنة للغة العربية
+        // طباعة حجوزات تخصص معين
         function printSpecialtyAppointments(specialty) {
-            try {
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
-                
-                // استخدام الخطوط التي تدعم العربية
-                doc.setFont('Times', 'normal');
-                doc.setFontSize(16);
-                
-                // العنوان
-                doc.text('مستشفى التكنولوجيا الحديثة', 105, 20, { align: 'center' });
-                doc.setFontSize(14);
-                doc.text(`كشف حجوزات ${getSpecialtyName(specialty)}`, 105, 30, { align: 'center' });
-                
-                // التاريخ
-                doc.setFontSize(10);
-                doc.text(`تاريخ الطباعة: ${new Date().toLocaleDateString('ar-EG')}`, 105, 40, { align: 'center' });
-                
-                // البيانات
-                const specialtyAppointments = appointments
-                    .filter(app => app.specialty === specialty)
-                    .sort((a, b) => a.queueNumber - b.queueNumber);
-                
-                // إعداد بيانات الجدول
-                const headers = ['رقم الدور', 'اسم المريض', 'رقم الهاتف', 'الطبيب', 'التاريخ', 'الوقت'];
-                const data = specialtyAppointments.map(app => [
-                    app.queueNumber.toString(),
-                    app.patientName,
-                    app.patientPhone,
-                    app.doctorName,
-                    formatDate(app.appointmentDate),
-                    app.timeSlot
-                ]);
-                
-                // إنشاء الجدول
-                doc.autoTable({
-                    startY: 50,
-                    head: [headers],
-                    body: data,
-                    styles: {
-                        font: 'Times',
-                        fontStyle: 'normal',
-                        fontSize: 10,
-                        halign: 'right',
-                        lineColor: [0, 0, 0],
-                        lineWidth: 0.1
-                    },
-                    headStyles: {
-                        fillColor: [26, 115, 232],
-                        textColor: [255, 255, 255],
-                        fontStyle: 'bold',
-                        halign: 'right'
-                    },
-                    bodyStyles: {
-                        halign: 'right'
-                    },
-                    alternateRowStyles: {
-                        fillColor: [245, 245, 245]
-                    },
-                    margin: { right: 10, left: 10 },
-                    didDrawPage: function (data) {
-                        // إضافة رأس الصفحة لكل صفحة
-                        doc.setFontSize(8);
-                        doc.setFont('Times', 'normal');
-                        doc.text('مستشفى التكنولوجيا الحديثة - كشف الحجوزات', data.settings.margin.left, 10);
-                        doc.text(`الصفحة ${doc.internal.getNumberOfPages()}`, 200, 10, { align: 'left' });
-                    }
-                });
-                
-                // حفظ الملف
-                const fileName = `حجوزات-${getSpecialtyName(specialty)}-${new Date().toISOString().split('T')[0]}.pdf`;
-                doc.save(fileName);
-                showSuccess('تم الطباعة', 'تم إنشاء ملف PDF بنجاح بدعم كامل للغة العربية');
-                
-            } catch (error) {
-                console.error('Error generating PDF:', error);
-                showError('حدث خطأ أثناء إنشاء ملف PDF. يرجى المحاولة مرة أخرى.');
-            }
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // إضافة دعم للغة العربية
+            doc.setLanguage('ar');
+            
+            // العنوان
+            doc.setFontSize(18);
+            doc.text('مستشفى التكنولوجيا الحديثة', 105, 15, { align: 'center' });
+            doc.setFontSize(14);
+            doc.text(`كشف حجوزات ${getSpecialtyName(specialty)}`, 105, 25, { align: 'center' });
+            
+            // التاريخ
+            doc.setFontSize(10);
+            doc.text(`تاريخ الطباعة: ${new Date().toLocaleDateString('ar-EG')}`, 105, 35, { align: 'center' });
+            
+            // البيانات
+            const specialtyAppointments = appointments
+                .filter(app => app.specialty === specialty)
+                .sort((a, b) => a.queueNumber - b.queueNumber);
+            
+            const tableData = specialtyAppointments.map(app => [
+                app.queueNumber.toString(),
+                app.patientName,
+                app.patientPhone,
+                app.doctorName,
+                formatDate(app.appointmentDate),
+                app.timeSlot
+            ]);
+            
+            doc.autoTable({
+                startY: 40,
+                head: [['رقم الدور', 'اسم المريض', 'رقم الهاتف', 'الطبيب', 'التاريخ', 'الوقت']],
+                body: tableData,
+                styles: { 
+                    font: 'Arial',
+                    fontSize: 10,
+                    halign: 'right'
+                },
+                headStyles: { 
+                    fillColor: [26, 115, 232],
+                    textColor: 255,
+                    fontStyle: 'bold'
+                },
+                margin: { right: 10, left: 10 },
+                didDrawPage: function (data) {
+                    // إضافة رأس الصفحة لكل صفحة
+                    doc.setFontSize(10);
+                    doc.text('مستشفى التكنولوجيا الحديثة - كشف الحجوزات', data.settings.margin.left, 10);
+                }
+            });
+            
+            // حفظ الملف
+            doc.save(`حجوزات-${getSpecialtyName(specialty)}-${new Date().toISOString().split('T')[0]}.pdf`);
+            showSuccess('تم الطباعة', 'تم إنشاء ملف PDF بنجاح');
         }
 
         // حذف موعد
