@@ -65,6 +65,88 @@
             }
         }
 
+        /* النوافذ المنبثقة */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.7);
+            background: white;
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            animation: modalAppear 0.4s ease forwards;
+        }
+
+        @keyframes modalAppear {
+            to {
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .modal-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            animation: bounce 1s ease;
+        }
+
+        .modal-success {
+            color: var(--secondary-color);
+        }
+
+        .modal-error {
+            color: #ea4335;
+        }
+
+        .modal-info {
+            color: var(--primary-color);
+        }
+
+        .modal h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--dark-color);
+        }
+
+        .modal p {
+            margin-bottom: 2rem;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
         /* شريط التنقل */
         .navbar {
             background-color: rgba(255, 255, 255, 0.97);
@@ -785,6 +867,14 @@
             .form-row {
                 flex-direction: column;
             }
+
+            .modal-content {
+                padding: 2rem 1.5rem;
+            }
+
+            .modal-buttons {
+                flex-direction: column;
+            }
         }
 
         @media (max-width: 480px) {
@@ -803,6 +893,47 @@
     </style>
 </head>
 <body>
+    <!-- النوافذ المنبثقة -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-icon modal-success">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3 id="successTitle">تم بنجاح</h3>
+            <p id="successMessage">تمت العملية بنجاح</p>
+            <div class="modal-buttons">
+                <button class="btn btn-primary" onclick="closeModal('successModal')">موافق</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="errorModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-icon modal-error">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <h3>خطأ</h3>
+            <p id="errorMessage">حدث خطأ ما</p>
+            <div class="modal-buttons">
+                <button class="btn btn-primary" onclick="closeModal('errorModal')">موافق</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-icon modal-info">
+                <i class="fas fa-question-circle"></i>
+            </div>
+            <h3>تأكيد</h3>
+            <p id="confirmMessage">هل أنت متأكد من تنفيذ هذا الإجراء؟</p>
+            <div class="modal-buttons">
+                <button class="btn btn-primary" id="confirmYes">نعم</button>
+                <button class="btn" onclick="closeModal('confirmModal')">لا</button>
+            </div>
+        </div>
+    </div>
+
     <!-- الخلفية المتحركة -->
     <div class="background"></div>
 
@@ -1107,6 +1238,50 @@
         let currentUser = null;
         let nextDoctorId = 11;
 
+        // وظائف النوافذ المنبثقة
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function showSuccess(title, message) {
+            document.getElementById('successTitle').textContent = title;
+            document.getElementById('successMessage').textContent = message;
+            showModal('successModal');
+        }
+
+        function showError(message) {
+            document.getElementById('errorMessage').textContent = message;
+            showModal('errorModal');
+        }
+
+        function showConfirm(message, callback) {
+            document.getElementById('confirmMessage').textContent = message;
+            const confirmYes = document.getElementById('confirmYes');
+            
+            // إزالة المستمعين السابقين
+            const newConfirmYes = confirmYes.cloneNode(true);
+            confirmYes.parentNode.replaceChild(newConfirmYes, confirmYes);
+            
+            // إضافة مستمع جديد
+            newConfirmYes.addEventListener('click', function() {
+                closeModal('confirmModal');
+                callback();
+            });
+            
+            showModal('confirmModal');
+        }
+
+        // إغلاق النافذة عند النقر خارجها
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+
         // وظيفة عرض الصفحات
         function showPage(pageId) {
             // إخفاء جميع الصفحات
@@ -1215,7 +1390,7 @@
             const appointmentDate = document.getElementById('appointmentDate').value;
             
             if (!selectedTimeSlot) {
-                alert('يرجى اختيار وقت الموعد');
+                showError('يرجى اختيار وقت الموعد');
                 return;
             }
             
@@ -1249,8 +1424,14 @@
             });
             selectedTimeSlot = '';
             
-            alert('تم حجز الموعد بنجاح! رقم الحجز: ' + newAppointment.id + '\nرقم الدور: ' + newAppointment.queueNumber);
-            showPage('home');
+            showSuccess(
+                'تم الحجز بنجاح', 
+                `تم حجز الموعد بنجاح!\nرقم الحجز: ${newAppointment.id}\nرقم الدور: ${newAppointment.queueNumber}`
+            );
+            
+            setTimeout(() => {
+                showPage('home');
+            }, 2000);
         });
 
         // توليد رقم الدور
@@ -1281,9 +1462,9 @@
                 // الانتقال إلى لوحة التحكم
                 showPage('dashboard');
                 
-                alert(`مرحباً ${adminUser.name}! تم تسجيل الدخول بنجاح`);
+                showSuccess('تم تسجيل الدخول', `مرحباً ${adminUser.name}! تم تسجيل الدخول بنجاح`);
             } else {
-                alert('اسم المستخدم أو كلمة المرور غير صحيحة');
+                showError('اسم المستخدم أو كلمة المرور غير صحيحة');
             }
         });
 
@@ -1479,7 +1660,7 @@
             const specialty = document.getElementById('newDoctorSpecialty').value;
             
             if (!name || !specialty) {
-                alert('يرجى ملء جميع الحقول');
+                showError('يرجى ملء جميع الحقول');
                 return;
             }
             
@@ -1506,12 +1687,12 @@
             updateDoctorsManagement();
             updateSpecialtiesAndDoctors();
             
-            alert('تم إضافة الطبيب بنجاح');
+            showSuccess('تم الإضافة', 'تم إضافة الطبيب بنجاح');
         }
 
         // حذف طبيب
         function deleteDoctor(specialty, doctorId) {
-            if (confirm('هل أنت متأكد من حذف هذا الطبيب؟ سيتم حذف جميع حجوزاته أيضاً.')) {
+            showConfirm('هل أنت متأكد من حذف هذا الطبيب؟ سيتم حذف جميع حجوزاته أيضاً.', function() {
                 // حذف الطبيب
                 doctorsBySpecialty[specialty] = doctorsBySpecialty[specialty].filter(doctor => doctor.id !== doctorId);
                 
@@ -1526,8 +1707,8 @@
                 updateDoctorsManagement();
                 updateDashboard();
                 
-                alert('تم حذف الطبيب وجميع حجوزاته بنجاح');
-            }
+                showSuccess('تم الحذف', 'تم حذف الطبيب وجميع حجوزاته بنجاح');
+            });
         }
 
         // الحصول على اسم التخصص بالعربية
@@ -1554,6 +1735,9 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
+            // إضافة دعم للغة العربية
+            doc.setLanguage('ar');
+            
             // العنوان
             doc.setFontSize(18);
             doc.text('مستشفى التكنولوجيا الحديثة', 105, 15, { align: 'center' });
@@ -1570,7 +1754,7 @@
                 .sort((a, b) => a.queueNumber - b.queueNumber);
             
             const tableData = specialtyAppointments.map(app => [
-                app.queueNumber,
+                app.queueNumber.toString(),
                 app.patientName,
                 app.patientPhone,
                 app.doctorName,
@@ -1582,32 +1766,48 @@
                 startY: 40,
                 head: [['رقم الدور', 'اسم المريض', 'رقم الهاتف', 'الطبيب', 'التاريخ', 'الوقت']],
                 body: tableData,
-                styles: { font: 'Arial', fontSize: 10, halign: 'right' },
-                headStyles: { fillColor: [26, 115, 232] },
-                margin: { right: 10, left: 10 }
+                styles: { 
+                    font: 'Arial',
+                    fontSize: 10,
+                    halign: 'right'
+                },
+                headStyles: { 
+                    fillColor: [26, 115, 232],
+                    textColor: 255,
+                    fontStyle: 'bold'
+                },
+                margin: { right: 10, left: 10 },
+                didDrawPage: function (data) {
+                    // إضافة رأس الصفحة لكل صفحة
+                    doc.setFontSize(10);
+                    doc.text('مستشفى التكنولوجيا الحديثة - كشف الحجوزات', data.settings.margin.left, 10);
+                }
             });
             
             // حفظ الملف
             doc.save(`حجوزات-${getSpecialtyName(specialty)}-${new Date().toISOString().split('T')[0]}.pdf`);
+            showSuccess('تم الطباعة', 'تم إنشاء ملف PDF بنجاح');
         }
 
         // حذف موعد
         function deleteAppointment(id) {
-            if (confirm('هل أنت متأكد من حذف هذا الموعد؟')) {
+            showConfirm('هل أنت متأكد من حذف هذا الموعد؟', function() {
                 appointments = appointments.filter(app => app.id !== id);
                 localStorage.setItem('appointments', JSON.stringify(appointments));
                 updateDashboard();
-                alert('تم حذف الموعد بنجاح');
-            }
+                showSuccess('تم الحذف', 'تم حذف الموعد بنجاح');
+            });
         }
 
         // تسجيل الخروج
         function logout() {
-            currentUser = null;
-            localStorage.removeItem('currentUser');
-            updateUserInterface();
-            showPage('home');
-            alert('تم تسجيل الخروج بنجاح');
+            showConfirm('هل أنت متأكد من تسجيل الخروج؟', function() {
+                currentUser = null;
+                localStorage.removeItem('currentUser');
+                updateUserInterface();
+                showPage('home');
+                showSuccess('تم الخروج', 'تم تسجيل الخروج بنجاح');
+            });
         }
 
         // تعيين الحد الأدنى للتاريخ في حقل التاريخ (اليوم)
