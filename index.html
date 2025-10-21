@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مستشفى التكنولوجيا الحديثة</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* متغيرات الألوان */
+        :root {
+            --primary-color: #1a73e8;
+            --primary-dark: #0d47a1;
+            --secondary-color: #34a853;
+            --secondary-dark: #2e7d32;
+            --accent-color: #fbbc05;
+            --accent-dark: #f57c00;
+            --light-color: #f8f9fa;
+            --dark-color: #202124;
+            --text-color: #333;
+            --text-light: #666;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        /* إعدادات عامة */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* الخلفية المتحركة */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            filter: blur(8px) brightness(0.85);
+            z-index: -1;
+            animation: slowMove 40s infinite alternate ease-in-out;
+        }
+
+        @keyframes slowMove {
+            0% {
+                transform: scale(1.05) translateY(-5px);
+            }
+            100% {
+                transform: scale(1.1) translateY(5px);
+            }
+        }
+
+        /* شريط التنقل */
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.97);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 0.8rem 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .hospital-logo {
+            height: 55px;
+        }
+
+        .ministry-logo {
+            height: 45px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 1rem;
+        }
+
+        .nav-links li a {
+            text-decoration: none;
+            color: var(--dark-color);
+            font-weight: 600;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-links li a:before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 0;
+            height: 3px;
+            background-color: var(--primary-color);
+            transition: var(--transition);
+        }
+
+        .nav-links li a:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-links li a:hover:before {
+            width: 100%;
+        }
+
+        .nav-links li a.active {
+            color: var(--primary-color);
+        }
+
+        .nav-links li a.active:before {
+            width: 100%;
+        }
+
+        /* المحتوى الرئيسي */
+        .container {
+            max-width: 1400px;
+            margin: 2.5rem auto;
+            padding: 0 1.5rem;
+            background-color: rgba(255, 255, 255, 0.92);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
+
+        /* الصفحة الرئيسية */
+        .hero {
+            text-align: center;
+            padding: 5rem 2rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 16px 16px 0 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,128C960,128,1056,192,1152,192C1248,192,1344,128,1392,96L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-size: cover;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 800px;
+            margin: 0 auto 2.5rem;
+            opacity: 0.95;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: var(--accent-color);
+            color: var(--dark-color);
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            box-shadow: var(--shadow-light);
+        }
+
+        .btn:hover {
+            background-color: var(--accent-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn i {
+            font-size: 1.1rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2.5rem;
+            padding: 4rem 2rem;
+        }
+
+        .feature-card {
+            background-color: white;
+            padding: 2.5rem 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-light);
+            text-align: center;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to left, var(--primary-color), var(--secondary-color));
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-icon {
+            font-size: 3.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--dark-color);
+        }
+
+        .feature-card p {
+            color: var(--text-light);
+            line-height: 1.7;
+        }
+
+        /* نموذج الحجز */
+        .booking-form {
+            padding: 3rem 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .form-header h2 {
+            font-size: 2.2rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-header p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.8rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.7rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.2);
+            outline: none;
+        }
+
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .time-slot {
+            background-color: #f0f0f0;
+            padding: 1rem;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+
+        .time-slot:hover {
+            background-color: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        .time-slot.selected {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-dark);
+        }
+
+        .time-slot.disabled {
+            background-color: #f5f5f5;
+            color: #aaa;
+            cursor: not-allowed;
+        }
+
+        /* صفحة تسجيل الدخول */
+        .login-container {
+            max-width: 450px;
+            margin: 5rem auto;
+            padding: 3rem;
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+            font-size: 2rem;
+        }
+
+        .login-icon {
+            font-size: 4rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        /* لوحة التحكم */
+        .dashboard {
+            padding: 2.5rem;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .dashboard-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .dashboard-title i {
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+
+        .dashboard-title h2 {
+            font-size: 2rem;
+            color: var(--dark-color);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-light);
+            text-align: center;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to left, var(--primary-color), var(--secondary-color));
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        .appointments-section {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-light);
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 1.5rem 2rem;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-header h3 {
+            font-size: 1.5rem;
+        }
+
+        .appointments-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .appointments-table th, 
+        .appointments-table td {
+            padding: 1.2rem 1.5rem;
+            text-align: right;
+            border-bottom: 1px solid #eee;
+        }
+
+        .appointments-table th {
+            background-color: #f8f9fa;
+            color: var(--dark-color);
+            font-weight: 600;
+        }
+
+        .appointments-table tr:hover {
+            background-color: #f5f9ff;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.9rem;
+        }
+
+        .print-btn {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .print-btn:hover {
+            background-color: var(--secondary-dark);
+        }
+
+        .delete-btn {
+            background-color: #ea4335;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background-color: #d33426;
+        }
+
+        /* التذييل */
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            text-align: center;
+            padding: 3rem 1rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            height: 60px;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-content p {
+            margin-bottom: 0.5rem;
+            opacity: 0.9;
+        }
+
+        .university {
+            font-weight: bold;
+            color: var(--accent-color);
+            font-size: 1.1rem;
+        }
+
+        /* إخفاء الصفحات */
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .active {
+            display: block;
+        }
+
+        /* التجاوب مع الشاشات المختلفة */
+        @media (max-width: 992px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .hero {
+                padding: 3rem 1.5rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .time-slots {
+                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-header {
+                flex-direction: column;
+                gap: 1.5rem;
+                align-items: flex-start;
+            }
+            
+            .appointments-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 2rem 1.5rem;
+            }
+            
+            .booking-form {
+                padding: 2rem 1rem;
+            }
+            
+            .dashboard {
+                padding: 1.5rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- الخلفية المتحركة -->
+    <div class="background"></div>
+
+    <!-- شريط التنقل -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo-section">
+                <img src="https://via.placeholder.com/180x60?text=شعار+المستشفى" alt="شعار المستشفى" class="hospital-logo">
+                <img src="https://via.placeholder.com/140x50?text=وزارة+الصحة" alt="شعار وزارة الصحة" class="ministry-logo">
+            </div>
+            <ul class="nav-links">
+                <li><a href="#" class="active" onclick="showPage('home')">الرئيسية</a></li>
+                <li><a href="#" onclick="showPage('booking')">حجز موعد</a></li>
+                <li><a href="#" onclick="showPage('login')">تسجيل الدخول</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- المحتوى الرئيسي -->
+    <div class="container">
+        <!-- الصفحة الرئيسية -->
+        <div id="home" class="page active">
+            <section class="hero">
+                <div class="hero-content">
+                    <h1>مستشفى التكنولوجيا الحديثة</h1>
+                    <p>نقدم لكم أفضل الخدمات الطبية بأعلى معايير الجودة والكفاءة، مع فريق طبي متخصص وأحدث التقنيات الطبية.</p>
+                    <a href="#" class="btn btn-primary" onclick="showPage('booking')">
+                        <i class="fas fa-calendar-check"></i> احجز موعدك الآن
+                    </a>
+                </div>
+            </section>
+
+            <section class="features">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-hospital"></i></div>
+                    <h3>أقسام متخصصة</h3>
+                    <p>نوفر مجموعة واسعة من التخصصات الطبية لتلبية جميع احتياجاتكم الصحية بدءًا من الباطنة والجراحة وصولاً إلى التخصصات الدقيقة.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-user-md"></i></div>
+                    <h3>أطباء متميزون</h3>
+                    <p>فريق طبي متكامل من أفضل الأطباء الاستشاريين في مختلف التخصصات، مع خبرات واسعة وشهادات معتمدة محليًا ودوليًا.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-clock"></i></div>
+                    <h3>مواعيد مرنة</h3>
+                    <p>نظام حجز مواعيد مرن يمكنك من اختيار الوقت المناسب لك بسهولة، مع إمكانية التعديل والإلغاء بكل يسر.</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- صفحة حجز الموعد -->
+        <div id="booking" class="page">
+            <div class="booking-form">
+                <div class="form-header">
+                    <h2>حجز موعد طبي</h2>
+                    <p>املأ النموذج التالي لحجز موعدك الطبي بكل سهولة</p>
+                </div>
+                
+                <form id="appointmentForm">
+                    <div class="form-group">
+                        <label for="patientName"><i class="fas fa-user"></i> الاسم بالكامل</label>
+                        <input type="text" id="patientName" class="form-control" placeholder="أدخل اسمك بالكامل" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="patientPhone"><i class="fas fa-phone"></i> رقم الهاتف</label>
+                        <input type="tel" id="patientPhone" class="form-control" placeholder="أدخل رقم هاتفك" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="specialty"><i class="fas fa-stethoscope"></i> التخصص المطلوب</label>
+                        <select id="specialty" class="form-control" onchange="updateDoctors()" required>
+                            <option value="">اختر التخصص</option>
+                            <option value="cardiology">أمراض القلب</option>
+                            <option value="neurology">الأعصاب</option>
+                            <option value="orthopedics">العظام</option>
+                            <option value="pediatrics">طب الأطفال</option>
+                            <option value="surgery">الجراحة</option>
+                            <option value="internal">الباطنة</option>
+                            <option value="ophthalmology">العيون</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="doctor"><i class="fas fa-user-md"></i> اختر الطبيب</label>
+                        <select id="doctor" class="form-control" required>
+                            <option value="">اختر الطبيب</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="appointmentDate"><i class="fas fa-calendar-alt"></i> تاريخ الموعد</label>
+                        <input type="date" id="appointmentDate" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-clock"></i> اختر الوقت</label>
+                        <div class="time-slots">
+                            <div class="time-slot" onclick="selectTimeSlot(this)">8:00 - 9:00</div>
+                            <div class="time-slot" onclick="selectTimeSlot(this)">9:00 - 10:00</div>
+                            <div class="time-slot" onclick="selectTimeSlot(this)">10:00 - 11:00</div>
+                            <div class="time-slot" onclick="selectTimeSlot(this)">11:00 - 12:00</div>
+                            <div class="time-slot" onclick="selectTimeSlot(this)">12:00 - 13:00</div>
+                            <div class="time-slot" onclick="selectTimeSlot(this)">13:00 - 14:00</div>
+                            <div class="time-slot" onclick="selectTimeSlot(this)">14:00 - 15:00</div>
+                            <div class="time-slot" onclick="selectTimeSlot(this)">15:00 - 16:00</div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        <i class="fas fa-check-circle"></i> تأكيد الحجز
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- صفحة تسجيل الدخول -->
+        <div id="login" class="page">
+            <div class="login-container">
+                <div class="login-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <h2>تسجيل الدخول للمسؤول</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="username">اسم المستخدم</label>
+                        <input type="text" id="username" class="form-control" placeholder="أدخل اسم المستخدم" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">كلمة المرور</label>
+                        <input type="password" id="password" class="form-control" placeholder="أدخل كلمة المرور" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- لوحة التحكم (تظهر بعد تسجيل الدخول) -->
+        <div id="dashboard" class="page">
+            <div class="dashboard">
+                <div class="dashboard-header">
+                    <div class="dashboard-title">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <h2>لوحة تحكم المسؤول</h2>
+                    </div>
+                    <button class="btn" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                    </button>
+                </div>
+                
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="stat-number" id="totalAppointments">0</div>
+                        <div class="stat-label">إجمالي المواعيد</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                        <div class="stat-number" id="todayAppointments">0</div>
+                        <div class="stat-label">مواعيد اليوم</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <div class="stat-number" id="doctorsCount">8</div>
+                        <div class="stat-label">عدد الأطباء</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-number" id="patientsCount">0</div>
+                        <div class="stat-label">المرضى المسجلين</div>
+                    </div>
+                </div>
+                
+                <div class="appointments-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-list-alt"></i> المواعيد القادمة</h3>
+                        <button class="btn print-btn" onclick="printAppointments()">
+                            <i class="fas fa-print"></i> طباعة الكشف
+                        </button>
+                    </div>
+                    <table class="appointments-table">
+                        <thead>
+                            <tr>
+                                <th>اسم المريض</th>
+                                <th>رقم الهاتف</th>
+                                <th>التخصص</th>
+                                <th>الطبيب</th>
+                                <th>التاريخ</th>
+                                <th>الوقت</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="appointmentsBody">
+                            <!-- سيتم ملء الجدول ديناميكياً -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- التذييل -->
+    <footer>
+        <div class="footer-content">
+            <img src="https://via.placeholder.com/180x60?text=شعار+المستشفى" alt="شعار المستشفى" class="footer-logo">
+            <p class="university">تم التطوير بواسطة طلاب جامعة برج العرب التكنولوجية</p>
+            <p>مستشفى التكنولوجيا الحديثة - تقديم أفضل الخدمات الطبية بتقنيات متطورة</p>
+            <p>جميع الحقوق محفوظة &copy; 2023</p>
+        </div>
+    </footer>
+
+    <script>
+        // بيانات الأطباء حسب التخصص
+        const doctorsBySpecialty = {
+            cardiology: [
+                { id: 1, name: "د. أحمد محمود" },
+                { id: 2, name: "د. محمد السيد" }
+            ],
+            neurology: [
+                { id: 3, name: "د. سارة عبدالله" },
+                { id: 4, name: "د. ياسمين فتحي" }
+            ],
+            orthopedics: [
+                { id: 5, name: "د. خالد مصطفى" },
+                { id: 6, name: "د. عمرو حسين" }
+            ],
+            pediatrics: [
+                { id: 7, name: "د. نادية رشاد" },
+                { id: 8, name: "د. هبة الله" }
+            ],
+            surgery: [
+                { id: 9, name: "د. وليد جمال" },
+                { id: 10, name: "د. علي محمد" }
+            ],
+            internal: [
+                { id: 11, name: "د. مريم حسن" },
+                { id: 12, name: "د. محمود عبدالرحمن" }
+            ],
+            ophthalmology: [
+                { id: 13, name: "د. سامي فاروق" },
+                { id: 14, name: "د. لينا عادل" }
+            ]
+        };
+
+        // بيانات المواعيد (لتخزين محلي)
+        let appointments = JSON.parse(localStorage.getItem('appointments')) || [];
+        let selectedTimeSlot = '';
+
+        // وظيفة عرض الصفحات
+        function showPage(pageId) {
+            // إخفاء جميع الصفحات
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // تحديث التنقل النشط
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // إضافة النشط للرابط المناسب
+            const activeLink = document.querySelector(`.nav-links a[onclick="showPage('${pageId}')"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+            
+            // عرض الصفحة المطلوبة
+            document.getElementById(pageId).classList.add('active');
+            
+            // إذا كانت صفحة الحجز، قم بتحديث قائمة الأطباء
+            if (pageId === 'booking') {
+                updateDoctors();
+            }
+        }
+
+        // تحديث قائمة الأطباء بناءً على التخصص المختار
+        function updateDoctors() {
+            const specialty = document.getElementById('specialty').value;
+            const doctorSelect = document.getElementById('doctor');
+            
+            // مسح الخيارات الحالية
+            doctorSelect.innerHTML = '<option value="">اختر الطبيب</option>';
+            
+            // إضافة الأطباء حسب التخصص
+            if (specialty && doctorsBySpecialty[specialty]) {
+                doctorsBySpecialty[specialty].forEach(doctor => {
+                    const option = document.createElement('option');
+                    option.value = doctor.id;
+                    option.textContent = doctor.name;
+                    doctorSelect.appendChild(option);
+                });
+            }
+        }
+
+        // اختيار وقت الحجز
+        function selectTimeSlot(element) {
+            // إزالة التحديد من جميع الأوقات
+            document.querySelectorAll('.time-slot').forEach(slot => {
+                slot.classList.remove('selected');
+            });
+            
+            // تحديد الوقت المختار
+            element.classList.add('selected');
+            selectedTimeSlot = element.textContent;
+        }
+
+        // تسجيل موعد جديد
+        document.getElementById('appointmentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const patientName = document.getElementById('patientName').value;
+            const patientPhone = document.getElementById('patientPhone').value;
+            const specialty = document.getElementById('specialty').value;
+            const doctorId = document.getElementById('doctor').value;
+            const appointmentDate = document.getElementById('appointmentDate').value;
+            
+            if (!selectedTimeSlot) {
+                alert('يرجى اختيار وقت الموعد');
+                return;
+            }
+            
+            // الحصول على اسم الطبيب
+            const doctorName = document.getElementById('doctor').options[document.getElementById('doctor').selectedIndex].text;
+            
+            // إنشاء موعد جديد
+            const newAppointment = {
+                id: Date.now(),
+                patientName,
+                patientPhone,
+                specialty,
+                doctorName,
+                appointmentDate,
+                timeSlot: selectedTimeSlot
+            };
+            
+            // إضافة الموعد إلى القائمة
+            appointments.push(newAppointment);
+            
+            // حفظ في التخزين المحلي
+            localStorage.setItem('appointments', JSON.stringify(appointments));
+            
+            // إعادة تعيين النموذج
+            document.getElementById('appointmentForm').reset();
+            document.querySelectorAll('.time-slot').forEach(slot => {
+                slot.classList.remove('selected');
+            });
+            selectedTimeSlot = '';
+            
+            alert('تم حجز الموعد بنجاح! رقم الحجز: ' + newAppointment.id);
+            showPage('home');
+        });
+
+        // تسجيل دخول المسؤول
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // في التطبيق الحقيقي، يجب التحقق من اسم المستخدم وكلمة المرور مع الخادم
+            if (username === 'admin' && password === 'admin') {
+                showPage('dashboard');
+                updateDashboard();
+            } else {
+                alert('اسم المستخدم أو كلمة المرور غير صحيحة');
+            }
+        });
+
+        // تحديث لوحة التحكم
+        function updateDashboard() {
+            // تحديث الإحصائيات
+            document.getElementById('totalAppointments').textContent = appointments.length;
+            
+            const today = new Date().toISOString().split('T')[0];
+            const todayApps = appointments.filter(app => app.appointmentDate === today);
+            document.getElementById('todayAppointments').textContent = todayApps.length;
+            
+            // حساب عدد المرضى الفريدين
+            const uniquePatients = [...new Set(appointments.map(app => app.patientPhone))];
+            document.getElementById('patientsCount').textContent = uniquePatients.length;
+            
+            // تحديث جدول المواعيد
+            const appointmentsBody = document.getElementById('appointmentsBody');
+            appointmentsBody.innerHTML = '';
+            
+            if (appointments.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td colspan="7" style="text-align: center; padding: 2rem;">لا توجد مواعيد مسجلة بعد</td>`;
+                appointmentsBody.appendChild(row);
+            } else {
+                appointments.forEach(appointment => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${appointment.patientName}</td>
+                        <td>${appointment.patientPhone}</td>
+                        <td>${getSpecialtyName(appointment.specialty)}</td>
+                        <td>${appointment.doctorName}</td>
+                        <td>${formatDate(appointment.appointmentDate)}</td>
+                        <td>${appointment.timeSlot}</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="action-btn print-btn" onclick="printAppointment(${appointment.id})">
+                                    <i class="fas fa-print"></i> طباعة
+                                </button>
+                                <button class="action-btn delete-btn" onclick="deleteAppointment(${appointment.id})">
+                                    <i class="fas fa-trash"></i> حذف
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    appointmentsBody.appendChild(row);
+                });
+            }
+        }
+
+        // الحصول على اسم التخصص بالعربية
+        function getSpecialtyName(specialty) {
+            const specialties = {
+                cardiology: 'أمراض القلب',
+                neurology: 'الأعصاب',
+                orthopedics: 'العظام',
+                pediatrics: 'طب الأطفال',
+                surgery: 'الجراحة',
+                internal: 'الباطنة',
+                ophthalmology: 'العيون'
+            };
+            
+            return specialties[specialty] || specialty;
+        }
+
+        // تنسيق التاريخ
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('ar-EG', options);
+        }
+
+        // طباعة موعد محدد
+        function printAppointment(id) {
+            const appointment = appointments.find(app => app.id === id);
+            if (appointment) {
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(`
+                    <html>
+                    <head>
+                        <title>كشف موعد - ${appointment.patientName}</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; padding: 25px; direction: rtl; }
+                            h1 { color: #1a73e8; text-align: center; margin-bottom: 30px; }
+                            .info { margin-bottom: 18px; padding: 10px; border-bottom: 1px solid #eee; }
+                            .label { font-weight: bold; color: #333; display: inline-block; width: 120px; }
+                            .header { text-align: center; margin-bottom: 30px; }
+                            .footer { margin-top: 50px; text-align: left; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <h1>مستشفى التكنولوجيا الحديثة</h1>
+                            <h2>كشف موعد طبي</h2>
+                        </div>
+                        <div class="info"><span class="label">اسم المريض:</span> ${appointment.patientName}</div>
+                        <div class="info"><span class="label">رقم الهاتف:</span> ${appointment.patientPhone}</div>
+                        <div class="info"><span class="label">التخصص:</span> ${getSpecialtyName(appointment.specialty)}</div>
+                        <div class="info"><span class="label">الطبيب:</span> ${appointment.doctorName}</div>
+                        <div class="info"><span class="label">التاريخ:</span> ${formatDate(appointment.appointmentDate)}</div>
+                        <div class="info"><span class="label">الوقت:</span> ${appointment.timeSlot}</div>
+                        <div class="info"><span class="label">رقم الحجز:</span> ${appointment.id}</div>
+                        <div class="footer">
+                            <div>التوقيع: ___________________</div>
+                            <div>ختم المستشفى</div>
+                        </div>
+                    </body>
+                    </html>
+                `);
+                printWindow.document.close();
+                printWindow.print();
+            }
+        }
+
+        // طباعة كشف المواعيد
+        function printAppointments() {
+            const printWindow = window.open('', '_blank');
+            let tableRows = '';
+            
+            appointments.forEach(appointment => {
+                tableRows += `
+                    <tr>
+                        <td>${appointment.patientName}</td>
+                        <td>${appointment.patientPhone}</td>
+                        <td>${getSpecialtyName(appointment.specialty)}</td>
+                        <td>${appointment.doctorName}</td>
+                        <td>${formatDate(appointment.appointmentDate)}</td>
+                        <td>${appointment.timeSlot}</td>
+                    </tr>
+                `;
+            });
+            
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>كشف المواعيد</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 25px; direction: rtl; }
+                        h1 { color: #1a73e8; text-align: center; margin-bottom: 30px; }
+                        h2 { text-align: center; margin-bottom: 20px; color: #333; }
+                        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                        th, td { border: 1px solid #ddd; padding: 12px; text-align: right; }
+                        th { background-color: #f2f2f2; font-weight: bold; }
+                        .header { text-align: center; margin-bottom: 30px; }
+                        .footer { margin-top: 50px; text-align: left; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>مستشفى التكنولوجيا الحديثة</h1>
+                        <h2>كشف المواعيد</h2>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>اسم المريض</th>
+                                <th>رقم الهاتف</th>
+                                <th>التخصص</th>
+                                <th>الطبيب</th>
+                                <th>التاريخ</th>
+                                <th>الوقت</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${tableRows}
+                        </tbody>
+                    </table>
+                    <div class="footer">
+                        <div>التوقيع: ___________________</div>
+                        <div>ختم المستشفى</div>
+                    </div>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        // حذف موعد
+        function deleteAppointment(id) {
+            if (confirm('هل أنت متأكد من حذف هذا الموعد؟')) {
+                appointments = appointments.filter(app => app.id !== id);
+                localStorage.setItem('appointments', JSON.stringify(appointments));
+                updateDashboard();
+            }
+        }
+
+        // تسجيل الخروج
+        function logout() {
+            showPage('home');
+            document.getElementById('loginForm').reset();
+        }
+
+        // تعيين الحد الأدنى للتاريخ في حقل التاريخ (اليوم)
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('appointmentDate').min = today;
+        });
+    </script>
+</body>
+</html>
