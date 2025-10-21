@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مستشفى التكنولوجيا الحديثة</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <style>
         /* متغيرات الألوان */
         :root {
@@ -418,27 +420,6 @@
             margin-bottom: 1.5rem;
         }
 
-        .login-tabs {
-            display: flex;
-            margin-bottom: 2rem;
-            border-radius: 8px;
-            overflow: hidden;
-            background-color: #f5f5f5;
-        }
-
-        .login-tab {
-            flex: 1;
-            padding: 1rem;
-            text-align: center;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .login-tab.active {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
         /* لوحة التحكم */
         .dashboard {
             padding: 2.5rem;
@@ -546,6 +527,7 @@
             border-radius: 12px;
             box-shadow: var(--shadow-light);
             overflow: hidden;
+            margin-bottom: 2rem;
         }
 
         .section-header {
@@ -618,48 +600,57 @@
             background-color: #d33426;
         }
 
-        /* إدارة المستخدمين */
-        .users-management {
+        /* إدارة الأطباء */
+        .doctors-management {
             background-color: white;
             border-radius: 12px;
             box-shadow: var(--shadow-light);
             overflow: hidden;
-            margin-top: 2rem;
+            margin-bottom: 2rem;
         }
 
-        .users-table {
+        .add-doctor-form {
+            padding: 1.5rem 2rem;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #eee;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .doctors-table {
             width: 100%;
             border-collapse: collapse;
         }
 
-        .users-table th, 
-        .users-table td {
+        .doctors-table th, 
+        .doctors-table td {
             padding: 1.2rem 1.5rem;
             text-align: right;
             border-bottom: 1px solid #eee;
         }
 
-        .users-table th {
+        .doctors-table th {
             background-color: #f8f9fa;
             color: var(--dark-color);
             font-weight: 600;
         }
 
-        .role-badge {
+        .specialty-badge {
             padding: 0.3rem 0.8rem;
             border-radius: 20px;
             font-size: 0.8rem;
             font-weight: 600;
-        }
-
-        .role-admin {
-            background-color: #ffeaa7;
-            color: #856404;
-        }
-
-        .role-user {
-            background-color: #d1ecf1;
-            color: #0c5460;
+            background-color: #e3f2fd;
+            color: #1565c0;
         }
 
         /* التذييل */
@@ -705,6 +696,28 @@
 
         .active {
             display: block;
+        }
+
+        /* التبويبات */
+        .tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #f5f5f5;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .tab.active {
+            background-color: var(--primary-color);
+            color: white;
         }
 
         /* التجاوب مع الشاشات المختلفة */
@@ -764,9 +777,13 @@
                 align-items: flex-start;
             }
             
-            .appointments-table, .users-table {
+            .appointments-table, .doctors-table {
                 display: block;
                 overflow-x: auto;
+            }
+
+            .form-row {
+                flex-direction: column;
             }
         }
 
@@ -801,14 +818,14 @@
                 <li><a href="#" onclick="showPage('booking')">حجز موعد</a></li>
                 <li id="userNavItem" style="display: none;">
                     <div class="user-info">
-                        <i class="fas fa-user"></i>
+                        <i class="fas fa-user-shield"></i>
                         <div>
-                            <div class="user-name" id="navUserName">مستخدم</div>
-                            <div class="user-role" id="navUserRole">دور</div>
+                            <div class="user-name" id="navUserName">المسؤول</div>
+                            <div class="user-role" id="navUserRole">مسؤول النظام</div>
                         </div>
                     </div>
                 </li>
-                <li><a href="#" onclick="showPage('login')" id="loginNavLink">تسجيل الدخول</a></li>
+                <li><a href="#" onclick="handleLoginNav()" id="loginNavLink">تسجيل الدخول</a></li>
             </ul>
         </div>
     </nav>
@@ -869,13 +886,6 @@
                         <label for="specialty"><i class="fas fa-stethoscope"></i> التخصص المطلوب</label>
                         <select id="specialty" class="form-control" onchange="updateDoctors()" required>
                             <option value="">اختر التخصص</option>
-                            <option value="cardiology">أمراض القلب</option>
-                            <option value="neurology">الأعصاب</option>
-                            <option value="orthopedics">العظام</option>
-                            <option value="pediatrics">طب الأطفال</option>
-                            <option value="surgery">الجراحة</option>
-                            <option value="internal">الباطنة</option>
-                            <option value="ophthalmology">العيون</option>
                         </select>
                     </div>
                     
@@ -918,12 +928,7 @@
                 <div class="login-icon">
                     <i class="fas fa-lock"></i>
                 </div>
-                <h2>تسجيل الدخول</h2>
-                
-                <div class="login-tabs">
-                    <div class="login-tab active" id="patientTab" onclick="switchLoginTab('patient')">مريض</div>
-                    <div class="login-tab" id="adminTab" onclick="switchLoginTab('admin')">مسؤول</div>
-                </div>
+                <h2>تسجيل الدخول للمسؤول</h2>
                 
                 <form id="loginForm">
                     <div class="form-group">
@@ -936,21 +941,10 @@
                         <input type="password" id="password" class="form-control" placeholder="أدخل كلمة المرور" required>
                     </div>
                     
-                    <div id="adminFields" style="display: none;">
-                        <div class="form-group">
-                            <label for="adminCode">كود المسؤول</label>
-                            <input type="password" id="adminCode" class="form-control" placeholder="أدخل كود المسؤول">
-                        </div>
-                    </div>
-                    
                     <button type="submit" class="btn btn-primary" style="width: 100%;">
                         <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
                     </button>
                 </form>
-                
-                <div style="margin-top: 1.5rem; text-align: center;">
-                    <p>ليس لديك حساب؟ <a href="#" onclick="showRegisterForm()" style="color: var(--primary-color);">إنشاء حساب جديد</a></p>
-                </div>
             </div>
         </div>
 
@@ -960,7 +954,7 @@
                 <div class="dashboard-header">
                     <div class="dashboard-title">
                         <i class="fas fa-tachometer-alt"></i>
-                        <h2>لوحة التحكم</h2>
+                        <h2>لوحة تحكم المسؤول</h2>
                     </div>
                     <button class="btn" onclick="logout()">
                         <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
@@ -968,15 +962,21 @@
                 </div>
                 
                 <div class="user-welcome">
-                    <h3>مرحباً <span id="welcomeUserName">مستخدم</span>!</h3>
-                    <p>أنت مسجل كـ <span id="welcomeUserRole">مستخدم</span></p>
+                    <h3>مرحباً <span id="welcomeUserName">المسؤول</span>!</h3>
+                    <p>أنت مسجل كمسؤول النظام ولديك صلاحيات كاملة</p>
                 </div>
                 
-                <div id="adminOnlySection" style="display: none;">
-                    <div class="admin-only">
-                        <i class="fas fa-shield-alt"></i> أنت مسجل كمسؤول ولديك صلاحيات كاملة
-                    </div>
-                    
+                <div class="admin-only">
+                    <i class="fas fa-shield-alt"></i> أنت مسجل كمسؤول ولديك صلاحيات كاملة
+                </div>
+                
+                <div class="tabs">
+                    <div class="tab active" onclick="switchTab('appointments')">الحجوزات</div>
+                    <div class="tab" onclick="switchTab('doctors')">إدارة الأطباء</div>
+                </div>
+                
+                <!-- قسم الحجوزات -->
+                <div id="appointmentsTab">
                     <div class="stats">
                         <div class="stat-card">
                             <div class="stat-icon">
@@ -996,7 +996,7 @@
                             <div class="stat-icon">
                                 <i class="fas fa-user-md"></i>
                             </div>
-                            <div class="stat-number" id="doctorsCount">8</div>
+                            <div class="stat-number" id="doctorsCount">0</div>
                             <div class="stat-label">عدد الأطباء</div>
                         </div>
                         <div class="stat-card">
@@ -1008,85 +1008,47 @@
                         </div>
                     </div>
                     
-                    <div class="appointments-section">
-                        <div class="section-header">
-                            <h3><i class="fas fa-list-alt"></i> المواعيد القادمة</h3>
-                            <button class="btn print-btn" onclick="printAppointments()">
-                                <i class="fas fa-print"></i> طباعة الكشف
-                            </button>
-                        </div>
-                        <table class="appointments-table">
-                            <thead>
-                                <tr>
-                                    <th>اسم المريض</th>
-                                    <th>رقم الهاتف</th>
-                                    <th>التخصص</th>
-                                    <th>الطبيب</th>
-                                    <th>التاريخ</th>
-                                    <th>الوقت</th>
-                                    <th>الإجراءات</th>
-                                </tr>
-                            </thead>
-                            <tbody id="appointmentsBody">
-                                <!-- سيتم ملء الجدول ديناميكياً -->
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <div class="users-management">
-                        <div class="section-header">
-                            <h3><i class="fas fa-users-cog"></i> إدارة المستخدمين</h3>
-                        </div>
-                        <table class="users-table">
-                            <thead>
-                                <tr>
-                                    <th>اسم المستخدم</th>
-                                    <th>البريد الإلكتروني</th>
-                                    <th>الدور</th>
-                                    <th>تاريخ التسجيل</th>
-                                    <th>الحالة</th>
-                                </tr>
-                            </thead>
-                            <tbody id="usersBody">
-                                <!-- سيتم ملء الجدول ديناميكياً -->
-                            </tbody>
-                        </table>
+                    <div id="appointmentsBySpecialty">
+                        <!-- سيتم ملء الحجوزات حسب التخصص ديناميكياً -->
                     </div>
                 </div>
                 
-                <div id="userOnlySection" style="display: none;">
-                    <div class="stats">
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-calendar-check"></i>
-                            </div>
-                            <div class="stat-number" id="userAppointmentsCount">0</div>
-                            <div class="stat-label">مواعيدي</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-calendar-day"></i>
-                            </div>
-                            <div class="stat-number" id="userTodayAppointments">0</div>
-                            <div class="stat-label">مواعيد اليوم</div>
-                        </div>
-                    </div>
-                    
-                    <div class="appointments-section">
+                <!-- قسم إدارة الأطباء -->
+                <div id="doctorsTab" style="display: none;">
+                    <div class="doctors-management">
                         <div class="section-header">
-                            <h3><i class="fas fa-list-alt"></i> مواعيدي</h3>
+                            <h3><i class="fas fa-user-md"></i> إدارة الأطباء</h3>
                         </div>
-                        <table class="appointments-table">
+                        
+                        <div class="add-doctor-form">
+                            <h4 style="margin-bottom: 1rem;">إضافة طبيب جديد</h4>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="newDoctorName">اسم الطبيب</label>
+                                    <input type="text" id="newDoctorName" class="form-control" placeholder="أدخل اسم الطبيب">
+                                </div>
+                                <div class="form-group">
+                                    <label for="newDoctorSpecialty">التخصص</label>
+                                    <select id="newDoctorSpecialty" class="form-control">
+                                        <option value="">اختر التخصص</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary" onclick="addDoctor()">
+                                <i class="fas fa-plus"></i> إضافة طبيب
+                            </button>
+                        </div>
+                        
+                        <table class="doctors-table">
                             <thead>
                                 <tr>
+                                    <th>اسم الطبيب</th>
                                     <th>التخصص</th>
-                                    <th>الطبيب</th>
-                                    <th>التاريخ</th>
-                                    <th>الوقت</th>
-                                    <th>الحالة</th>
+                                    <th>عدد الحجوزات</th>
+                                    <th>الإجراءات</th>
                                 </tr>
                             </thead>
-                            <tbody id="userAppointmentsBody">
+                            <tbody id="doctorsBody">
                                 <!-- سيتم ملء الجدول ديناميكياً -->
                             </tbody>
                         </table>
@@ -1107,8 +1069,16 @@
     </footer>
 
     <script>
-        // بيانات الأطباء حسب التخصص
-        const doctorsBySpecialty = {
+        // بيانات المسؤول الوحيد
+        const adminUser = {
+            username: 'admin',
+            password: 'admin123',
+            name: 'مسؤول النظام',
+            role: 'admin'
+        };
+
+        // بيانات الأطباء والتخصصات
+        let doctorsBySpecialty = JSON.parse(localStorage.getItem('doctorsBySpecialty')) || {
             cardiology: [
                 { id: 1, name: "د. أحمد محمود" },
                 { id: 2, name: "د. محمد السيد" }
@@ -1128,29 +1098,14 @@
             surgery: [
                 { id: 9, name: "د. وليد جمال" },
                 { id: 10, name: "د. علي محمد" }
-            ],
-            internal: [
-                { id: 11, name: "د. مريم حسن" },
-                { id: 12, name: "د. محمود عبدالرحمن" }
-            ],
-            ophthalmology: [
-                { id: 13, name: "د. سامي فاروق" },
-                { id: 14, name: "د. لينا عادل" }
             ]
         };
-
-        // بيانات المستخدمين
-        let users = JSON.parse(localStorage.getItem('users')) || [
-            { id: 1, username: 'admin', password: 'admin', email: 'admin@hospital.com', role: 'admin', name: 'المسؤول الرئيسي', joinDate: '2023-01-01', active: true },
-            { id: 2, username: 'user1', password: '123456', email: 'user1@example.com', role: 'user', name: 'محمد أحمد', joinDate: '2023-05-15', active: true },
-            { id: 3, username: 'user2', password: '123456', email: 'user2@example.com', role: 'user', name: 'فاطمة محمود', joinDate: '2023-06-20', active: true }
-        ];
 
         // بيانات المواعيد (لتخزين محلي)
         let appointments = JSON.parse(localStorage.getItem('appointments')) || [];
         let selectedTimeSlot = '';
         let currentUser = null;
-        let loginType = 'patient'; // 'patient' or 'admin'
+        let nextDoctorId = 11;
 
         // وظيفة عرض الصفحات
         function showPage(pageId) {
@@ -1175,7 +1130,7 @@
             
             // إذا كانت صفحة الحجز، قم بتحديث قائمة الأطباء
             if (pageId === 'booking') {
-                updateDoctors();
+                updateSpecialtiesAndDoctors();
             }
             
             // إذا كانت لوحة التحكم، قم بتحديث البيانات
@@ -1184,16 +1139,22 @@
             }
         }
 
-        // تبديل نوع تسجيل الدخول
-        function switchLoginTab(type) {
-            loginType = type;
+        // تحديث التخصصات والأطباء في نموذج الحجز
+        function updateSpecialtiesAndDoctors() {
+            const specialtySelect = document.getElementById('specialty');
+            const doctorSelect = document.getElementById('doctor');
             
-            // تحديث التبويبات
-            document.getElementById('patientTab').classList.toggle('active', type === 'patient');
-            document.getElementById('adminTab').classList.toggle('active', type === 'admin');
+            // مسح الخيارات الحالية
+            specialtySelect.innerHTML = '<option value="">اختر التخصص</option>';
+            doctorSelect.innerHTML = '<option value="">اختر الطبيب</option>';
             
-            // إظهار/إخفاء حقول المسؤول
-            document.getElementById('adminFields').style.display = type === 'admin' ? 'block' : 'none';
+            // إضافة التخصصات
+            Object.keys(doctorsBySpecialty).forEach(specialty => {
+                const option = document.createElement('option');
+                option.value = specialty;
+                option.textContent = getSpecialtyName(specialty);
+                specialtySelect.appendChild(option);
+            });
         }
 
         // تحديث قائمة الأطباء بناءً على التخصص المختار
@@ -1213,6 +1174,22 @@
                     doctorSelect.appendChild(option);
                 });
             }
+        }
+
+        // تحديث قائمة التخصصات في إضافة الأطباء
+        function updateSpecialtiesForManagement() {
+            const specialtySelect = document.getElementById('newDoctorSpecialty');
+            
+            // مسح الخيارات الحالية
+            specialtySelect.innerHTML = '<option value="">اختر التخصص</option>';
+            
+            // إضافة التخصصات
+            Object.keys(doctorsBySpecialty).forEach(specialty => {
+                const option = document.createElement('option');
+                option.value = specialty;
+                option.textContent = getSpecialtyName(specialty);
+                specialtySelect.appendChild(option);
+            });
         }
 
         // اختيار وقت الحجز
@@ -1252,10 +1229,11 @@
                 patientPhone,
                 specialty,
                 doctorName,
+                doctorId: parseInt(doctorId),
                 appointmentDate,
                 timeSlot: selectedTimeSlot,
-                userId: currentUser ? currentUser.id : null,
-                status: 'مؤكد'
+                status: 'مؤكد',
+                queueNumber: generateQueueNumber(specialty, appointmentDate)
             };
             
             // إضافة الموعد إلى القائمة
@@ -1271,35 +1249,30 @@
             });
             selectedTimeSlot = '';
             
-            alert('تم حجز الموعد بنجاح! رقم الحجز: ' + newAppointment.id);
+            alert('تم حجز الموعد بنجاح! رقم الحجز: ' + newAppointment.id + '\nرقم الدور: ' + newAppointment.queueNumber);
             showPage('home');
         });
 
-        // تسجيل دخول المستخدم
+        // توليد رقم الدور
+        function generateQueueNumber(specialty, date) {
+            const todayAppointments = appointments.filter(app => 
+                app.specialty === specialty && 
+                app.appointmentDate === date
+            );
+            return todayAppointments.length + 1;
+        }
+
+        // تسجيل دخول المسؤول
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
-            const adminCode = document.getElementById('adminCode').value;
             
-            // البحث عن المستخدم
-            const user = users.find(u => u.username === username && u.password === password);
-            
-            if (user) {
-                // التحقق من نوع المستخدم
-                if (loginType === 'admin' && user.role !== 'admin') {
-                    alert('ليس لديك صلاحيات المسؤول');
-                    return;
-                }
-                
-                if (loginType === 'admin' && adminCode !== 'admin123') {
-                    alert('كود المسؤول غير صحيح');
-                    return;
-                }
-                
+            // التحقق من بيانات المسؤول
+            if (username === adminUser.username && password === adminUser.password) {
                 // تسجيل الدخول الناجح
-                currentUser = user;
+                currentUser = adminUser;
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
                 
                 // تحديث واجهة المستخدم
@@ -1308,11 +1281,20 @@
                 // الانتقال إلى لوحة التحكم
                 showPage('dashboard');
                 
-                alert(`مرحباً ${user.name}! تم تسجيل الدخول بنجاح`);
+                alert(`مرحباً ${adminUser.name}! تم تسجيل الدخول بنجاح`);
             } else {
                 alert('اسم المستخدم أو كلمة المرور غير صحيحة');
             }
         });
+
+        // التعامل مع رابط تسجيل الدخول/الخروج
+        function handleLoginNav() {
+            if (currentUser) {
+                logout();
+            } else {
+                showPage('login');
+            }
+        }
 
         // تحديث واجهة المستخدم بعد تسجيل الدخول
         function updateUserInterface() {
@@ -1320,14 +1302,30 @@
                 // تحديث شريط التنقل
                 document.getElementById('userNavItem').style.display = 'block';
                 document.getElementById('navUserName').textContent = currentUser.name;
-                document.getElementById('navUserRole').textContent = currentUser.role === 'admin' ? 'مسؤول' : 'مستخدم';
+                document.getElementById('navUserRole').textContent = 'مسؤول النظام';
                 document.getElementById('loginNavLink').textContent = 'تسجيل الخروج';
-                document.getElementById('loginNavLink').setAttribute('onclick', 'logout()');
             } else {
                 // إعادة تعيين شريط التنقل
                 document.getElementById('userNavItem').style.display = 'none';
                 document.getElementById('loginNavLink').textContent = 'تسجيل الدخول';
-                document.getElementById('loginNavLink').setAttribute('onclick', 'showPage(\'login\')');
+            }
+        }
+
+        // تبديل التبويبات
+        function switchTab(tabName) {
+            // تحديث التبويبات
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // إظهار/إخفاء المحتوى
+            document.getElementById('appointmentsTab').style.display = tabName === 'appointments' ? 'block' : 'none';
+            document.getElementById('doctorsTab').style.display = tabName === 'doctors' ? 'block' : 'none';
+            
+            // إذا كان تبويب الأطباء، قم بتحديث البيانات
+            if (tabName === 'doctors') {
+                updateDoctorsManagement();
             }
         }
 
@@ -1337,106 +1335,198 @@
             
             // تحديث الترحيب
             document.getElementById('welcomeUserName').textContent = currentUser.name;
-            document.getElementById('welcomeUserRole').textContent = currentUser.role === 'admin' ? 'مسؤول' : 'مستخدم';
             
-            if (currentUser.role === 'admin') {
-                // إظهار قسم المسؤولين وإخفاء قسم المستخدمين
-                document.getElementById('adminOnlySection').style.display = 'block';
-                document.getElementById('userOnlySection').style.display = 'none';
+            // تحديث الإحصائيات
+            document.getElementById('totalAppointments').textContent = appointments.length;
+            
+            const today = new Date().toISOString().split('T')[0];
+            const todayApps = appointments.filter(app => app.appointmentDate === today);
+            document.getElementById('todayAppointments').textContent = todayApps.length;
+            
+            // حساب عدد الأطباء
+            let totalDoctors = 0;
+            Object.keys(doctorsBySpecialty).forEach(specialty => {
+                totalDoctors += doctorsBySpecialty[specialty].length;
+            });
+            document.getElementById('doctorsCount').textContent = totalDoctors;
+            
+            // حساب عدد المرضى الفريدين
+            const uniquePatients = [...new Set(appointments.map(app => app.patientPhone))];
+            document.getElementById('patientsCount').textContent = uniquePatients.length;
+            
+            // تحديث الحجوزات حسب التخصص
+            updateAppointmentsBySpecialty();
+        }
+
+        // تحديث الحجوزات حسب التخصص
+        function updateAppointmentsBySpecialty() {
+            const container = document.getElementById('appointmentsBySpecialty');
+            container.innerHTML = '';
+            
+            // تجميع الحجوزات حسب التخصص
+            const appointmentsBySpecialty = {};
+            Object.keys(doctorsBySpecialty).forEach(specialty => {
+                appointmentsBySpecialty[specialty] = appointments.filter(app => app.specialty === specialty);
+            });
+            
+            // إنشاء قسم لكل تخصص
+            Object.keys(appointmentsBySpecialty).forEach(specialty => {
+                const specialtyAppointments = appointmentsBySpecialty[specialty];
+                if (specialtyAppointments.length === 0) return;
                 
-                // تحديث الإحصائيات
-                document.getElementById('totalAppointments').textContent = appointments.length;
+                const section = document.createElement('div');
+                section.className = 'appointments-section';
                 
-                const today = new Date().toISOString().split('T')[0];
-                const todayApps = appointments.filter(app => app.appointmentDate === today);
-                document.getElementById('todayAppointments').textContent = todayApps.length;
+                section.innerHTML = `
+                    <div class="section-header">
+                        <h3><i class="fas fa-stethoscope"></i> ${getSpecialtyName(specialty)} (${specialtyAppointments.length} موعد)</h3>
+                        <button class="btn print-btn" onclick="printSpecialtyAppointments('${specialty}')">
+                            <i class="fas fa-print"></i> طباعة PDF
+                        </button>
+                    </div>
+                    <table class="appointments-table">
+                        <thead>
+                            <tr>
+                                <th>رقم الدور</th>
+                                <th>اسم المريض</th>
+                                <th>رقم الهاتف</th>
+                                <th>الطبيب</th>
+                                <th>التاريخ</th>
+                                <th>الوقت</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="appointmentsBody-${specialty}">
+                        </tbody>
+                    </table>
+                `;
                 
-                // حساب عدد المرضى الفريدين
-                const uniquePatients = [...new Set(appointments.map(app => app.patientPhone))];
-                document.getElementById('patientsCount').textContent = uniquePatients.length;
+                container.appendChild(section);
                 
-                // تحديث جدول المواعيد
-                const appointmentsBody = document.getElementById('appointmentsBody');
-                appointmentsBody.innerHTML = '';
-                
-                if (appointments.length === 0) {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `<td colspan="7" style="text-align: center; padding: 2rem;">لا توجد مواعيد مسجلة بعد</td>`;
-                    appointmentsBody.appendChild(row);
-                } else {
-                    appointments.forEach(appointment => {
+                // ملء جدول التخصص
+                const tbody = document.getElementById(`appointmentsBody-${specialty}`);
+                specialtyAppointments
+                    .sort((a, b) => a.queueNumber - b.queueNumber)
+                    .forEach(appointment => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
+                            <td>${appointment.queueNumber}</td>
                             <td>${appointment.patientName}</td>
                             <td>${appointment.patientPhone}</td>
-                            <td>${getSpecialtyName(appointment.specialty)}</td>
                             <td>${appointment.doctorName}</td>
                             <td>${formatDate(appointment.appointmentDate)}</td>
                             <td>${appointment.timeSlot}</td>
                             <td>
                                 <div class="action-btns">
-                                    <button class="action-btn print-btn" onclick="printAppointment(${appointment.id})">
-                                        <i class="fas fa-print"></i> طباعة
-                                    </button>
                                     <button class="action-btn delete-btn" onclick="deleteAppointment(${appointment.id})">
                                         <i class="fas fa-trash"></i> حذف
                                     </button>
                                 </div>
                             </td>
                         `;
-                        appointmentsBody.appendChild(row);
+                        tbody.appendChild(row);
                     });
-                }
-                
-                // تحديث جدول المستخدمين
-                const usersBody = document.getElementById('usersBody');
-                usersBody.innerHTML = '';
-                
-                users.forEach(user => {
+            });
+            
+            // إذا لم توجد حجوزات
+            if (container.innerHTML === '') {
+                container.innerHTML = '<div class="admin-only">لا توجد حجوزات حتى الآن</div>';
+            }
+        }
+
+        // تحديث إدارة الأطباء
+        function updateDoctorsManagement() {
+            // تحديث قائمة التخصصات
+            updateSpecialtiesForManagement();
+            
+            // تحديث جدول الأطباء
+            const doctorsBody = document.getElementById('doctorsBody');
+            doctorsBody.innerHTML = '';
+            
+            let hasDoctors = false;
+            
+            Object.keys(doctorsBySpecialty).forEach(specialty => {
+                doctorsBySpecialty[specialty].forEach(doctor => {
+                    hasDoctors = true;
+                    const doctorAppointments = appointments.filter(app => app.doctorId === doctor.id);
+                    
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>${user.name}</td>
-                        <td>${user.email}</td>
-                        <td><span class="role-badge ${user.role === 'admin' ? 'role-admin' : 'role-user'}">${user.role === 'admin' ? 'مسؤول' : 'مستخدم'}</span></td>
-                        <td>${formatDate(user.joinDate)}</td>
-                        <td>${user.active ? 'نشط' : 'غير نشط'}</td>
+                        <td>${doctor.name}</td>
+                        <td><span class="specialty-badge">${getSpecialtyName(specialty)}</span></td>
+                        <td>${doctorAppointments.length}</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="action-btn delete-btn" onclick="deleteDoctor('${specialty}', ${doctor.id})">
+                                    <i class="fas fa-trash"></i> حذف
+                                </button>
+                            </div>
+                        </td>
                     `;
-                    usersBody.appendChild(row);
+                    doctorsBody.appendChild(row);
                 });
-            } else {
-                // إظهار قسم المستخدمين وإخفاء قسم المسؤولين
-                document.getElementById('adminOnlySection').style.display = 'none';
-                document.getElementById('userOnlySection').style.display = 'block';
+            });
+            
+            // إذا لم توجد أطباء
+            if (!hasDoctors) {
+                doctorsBody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem;">لا توجد أطباء مسجلين</td></tr>`;
+            }
+        }
+
+        // إضافة طبيب جديد
+        function addDoctor() {
+            const name = document.getElementById('newDoctorName').value;
+            const specialty = document.getElementById('newDoctorSpecialty').value;
+            
+            if (!name || !specialty) {
+                alert('يرجى ملء جميع الحقول');
+                return;
+            }
+            
+            // إنشاء طبيب جديد
+            const newDoctor = {
+                id: nextDoctorId++,
+                name: name
+            };
+            
+            // إضافة الطبيب إلى التخصص
+            if (!doctorsBySpecialty[specialty]) {
+                doctorsBySpecialty[specialty] = [];
+            }
+            doctorsBySpecialty[specialty].push(newDoctor);
+            
+            // حفظ في التخزين المحلي
+            localStorage.setItem('doctorsBySpecialty', JSON.stringify(doctorsBySpecialty));
+            
+            // إعادة تعيين النموذج
+            document.getElementById('newDoctorName').value = '';
+            document.getElementById('newDoctorSpecialty').value = '';
+            
+            // تحديث الواجهة
+            updateDoctorsManagement();
+            updateSpecialtiesAndDoctors();
+            
+            alert('تم إضافة الطبيب بنجاح');
+        }
+
+        // حذف طبيب
+        function deleteDoctor(specialty, doctorId) {
+            if (confirm('هل أنت متأكد من حذف هذا الطبيب؟ سيتم حذف جميع حجوزاته أيضاً.')) {
+                // حذف الطبيب
+                doctorsBySpecialty[specialty] = doctorsBySpecialty[specialty].filter(doctor => doctor.id !== doctorId);
                 
-                // تحديث إحصائيات المستخدم
-                const userAppointments = appointments.filter(app => app.userId === currentUser.id);
-                document.getElementById('userAppointmentsCount').textContent = userAppointments.length;
+                // حذف حجوزات الطبيب
+                appointments = appointments.filter(app => app.doctorId !== doctorId);
                 
-                const today = new Date().toISOString().split('T')[0];
-                const userTodayApps = userAppointments.filter(app => app.appointmentDate === today);
-                document.getElementById('userTodayAppointments').textContent = userTodayApps.length;
+                // حفظ في التخزين المحلي
+                localStorage.setItem('doctorsBySpecialty', JSON.stringify(doctorsBySpecialty));
+                localStorage.setItem('appointments', JSON.stringify(appointments));
                 
-                // تحديث جدول مواعيد المستخدم
-                const userAppointmentsBody = document.getElementById('userAppointmentsBody');
-                userAppointmentsBody.innerHTML = '';
+                // تحديث الواجهة
+                updateDoctorsManagement();
+                updateDashboard();
                 
-                if (userAppointments.length === 0) {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `<td colspan="5" style="text-align: center; padding: 2rem;">لا توجد مواعيد مسجلة بعد</td>`;
-                    userAppointmentsBody.appendChild(row);
-                } else {
-                    userAppointments.forEach(appointment => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${getSpecialtyName(appointment.specialty)}</td>
-                            <td>${appointment.doctorName}</td>
-                            <td>${formatDate(appointment.appointmentDate)}</td>
-                            <td>${appointment.timeSlot}</td>
-                            <td>${appointment.status}</td>
-                        `;
-                        userAppointmentsBody.appendChild(row);
-                    });
-                }
+                alert('تم حذف الطبيب وجميع حجوزاته بنجاح');
             }
         }
 
@@ -1447,9 +1537,7 @@
                 neurology: 'الأعصاب',
                 orthopedics: 'العظام',
                 pediatrics: 'طب الأطفال',
-                surgery: 'الجراحة',
-                internal: 'الباطنة',
-                ophthalmology: 'العيون'
+                surgery: 'الجراحة'
             };
             
             return specialties[specialty] || specialty;
@@ -1461,110 +1549,46 @@
             return new Date(dateString).toLocaleDateString('ar-EG', options);
         }
 
-        // طباعة موعد محدد
-        function printAppointment(id) {
-            const appointment = appointments.find(app => app.id === id);
-            if (appointment) {
-                const printWindow = window.open('', '_blank');
-                printWindow.document.write(`
-                    <html>
-                    <head>
-                        <title>كشف موعد - ${appointment.patientName}</title>
-                        <style>
-                            body { font-family: Arial, sans-serif; padding: 25px; direction: rtl; }
-                            h1 { color: #1a73e8; text-align: center; margin-bottom: 30px; }
-                            .info { margin-bottom: 18px; padding: 10px; border-bottom: 1px solid #eee; }
-                            .label { font-weight: bold; color: #333; display: inline-block; width: 120px; }
-                            .header { text-align: center; margin-bottom: 30px; }
-                            .footer { margin-top: 50px; text-align: left; }
-                        </style>
-                    </head>
-                    <body>
-                        <div class="header">
-                            <h1>مستشفى التكنولوجيا الحديثة</h1>
-                            <h2>كشف موعد طبي</h2>
-                        </div>
-                        <div class="info"><span class="label">اسم المريض:</span> ${appointment.patientName}</div>
-                        <div class="info"><span class="label">رقم الهاتف:</span> ${appointment.patientPhone}</div>
-                        <div class="info"><span class="label">التخصص:</span> ${getSpecialtyName(appointment.specialty)}</div>
-                        <div class="info"><span class="label">الطبيب:</span> ${appointment.doctorName}</div>
-                        <div class="info"><span class="label">التاريخ:</span> ${formatDate(appointment.appointmentDate)}</div>
-                        <div class="info"><span class="label">الوقت:</span> ${appointment.timeSlot}</div>
-                        <div class="info"><span class="label">رقم الحجز:</span> ${appointment.id}</div>
-                        <div class="footer">
-                            <div>التوقيع: ___________________</div>
-                            <div>ختم المستشفى</div>
-                        </div>
-                    </body>
-                    </html>
-                `);
-                printWindow.document.close();
-                printWindow.print();
-            }
-        }
-
-        // طباعة كشف المواعيد
-        function printAppointments() {
-            const printWindow = window.open('', '_blank');
-            let tableRows = '';
+        // طباعة حجوزات تخصص معين
+        function printSpecialtyAppointments(specialty) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
             
-            appointments.forEach(appointment => {
-                tableRows += `
-                    <tr>
-                        <td>${appointment.patientName}</td>
-                        <td>${appointment.patientPhone}</td>
-                        <td>${getSpecialtyName(appointment.specialty)}</td>
-                        <td>${appointment.doctorName}</td>
-                        <td>${formatDate(appointment.appointmentDate)}</td>
-                        <td>${appointment.timeSlot}</td>
-                    </tr>
-                `;
+            // العنوان
+            doc.setFontSize(18);
+            doc.text('مستشفى التكنولوجيا الحديثة', 105, 15, { align: 'center' });
+            doc.setFontSize(14);
+            doc.text(`كشف حجوزات ${getSpecialtyName(specialty)}`, 105, 25, { align: 'center' });
+            
+            // التاريخ
+            doc.setFontSize(10);
+            doc.text(`تاريخ الطباعة: ${new Date().toLocaleDateString('ar-EG')}`, 105, 35, { align: 'center' });
+            
+            // البيانات
+            const specialtyAppointments = appointments
+                .filter(app => app.specialty === specialty)
+                .sort((a, b) => a.queueNumber - b.queueNumber);
+            
+            const tableData = specialtyAppointments.map(app => [
+                app.queueNumber,
+                app.patientName,
+                app.patientPhone,
+                app.doctorName,
+                formatDate(app.appointmentDate),
+                app.timeSlot
+            ]);
+            
+            doc.autoTable({
+                startY: 40,
+                head: [['رقم الدور', 'اسم المريض', 'رقم الهاتف', 'الطبيب', 'التاريخ', 'الوقت']],
+                body: tableData,
+                styles: { font: 'Arial', fontSize: 10, halign: 'right' },
+                headStyles: { fillColor: [26, 115, 232] },
+                margin: { right: 10, left: 10 }
             });
             
-            printWindow.document.write(`
-                <html>
-                <head>
-                    <title>كشف المواعيد</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; padding: 25px; direction: rtl; }
-                        h1 { color: #1a73e8; text-align: center; margin-bottom: 30px; }
-                        h2 { text-align: center; margin-bottom: 20px; color: #333; }
-                        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-                        th, td { border: 1px solid #ddd; padding: 12px; text-align: right; }
-                        th { background-color: #f2f2f2; font-weight: bold; }
-                        .header { text-align: center; margin-bottom: 30px; }
-                        .footer { margin-top: 50px; text-align: left; }
-                    </style>
-                </head>
-                <body>
-                    <div class="header">
-                        <h1>مستشفى التكنولوجيا الحديثة</h1>
-                        <h2>كشف المواعيد</h2>
-                    </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>اسم المريض</th>
-                                <th>رقم الهاتف</th>
-                                <th>التخصص</th>
-                                <th>الطبيب</th>
-                                <th>التاريخ</th>
-                                <th>الوقت</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${tableRows}
-                        </tbody>
-                    </table>
-                    <div class="footer">
-                        <div>التوقيع: ___________________</div>
-                        <div>ختم المستشفى</div>
-                    </div>
-                </body>
-                </html>
-            `);
-            printWindow.document.close();
-            printWindow.print();
+            // حفظ الملف
+            doc.save(`حجوزات-${getSpecialtyName(specialty)}-${new Date().toISOString().split('T')[0]}.pdf`);
         }
 
         // حذف موعد
@@ -1573,6 +1597,7 @@
                 appointments = appointments.filter(app => app.id !== id);
                 localStorage.setItem('appointments', JSON.stringify(appointments));
                 updateDashboard();
+                alert('تم حذف الموعد بنجاح');
             }
         }
 
@@ -1597,16 +1622,14 @@
                 updateUserInterface();
             }
             
-            // حفظ بيانات المستخدمين إذا لم تكن موجودة
-            if (!localStorage.getItem('users')) {
-                localStorage.setItem('users', JSON.stringify(users));
+            // تهيئة البيانات إذا لم تكن موجودة
+            if (!localStorage.getItem('doctorsBySpecialty')) {
+                localStorage.setItem('doctorsBySpecialty', JSON.stringify(doctorsBySpecialty));
             }
+            
+            // تحديث التخصصات في نموذج الحجز
+            updateSpecialtiesAndDoctors();
         });
-
-        // عرض نموذج التسجيل (وهمي)
-        function showRegisterForm() {
-            alert('نظام التسجيل غير متاح حالياً. الرجاء استخدام بيانات الاختبار:\n\nللمسؤول: admin / admin\nللمستخدم: user1 / 123456');
-        }
     </script>
 </body>
 </html>
